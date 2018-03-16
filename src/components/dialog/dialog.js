@@ -536,6 +536,8 @@ function MdDialogDirective($$rAF, $mdTheming, $mdDialog) {
  *     `three` into the controller, with the value 3. If `bindToController` is true, they will be
  *     copied to the controller instead.
  *   - `bindToController` - `bool`: bind the locals to the controller, instead of passing them in.
+ *   - `resolve` - `{function=}`: Similar to locals, except it takes as values functions that return promises, and the	
+ *      dialog will not open until all of the promises resolve.
  *   - `controllerAs` - `{string=}`: An alias to assign the controller to on the scope.
  *   - `parent` - `{element=}`: The element to append the dialog to. Defaults to appending
  *     to the root element of the application.
@@ -696,7 +698,8 @@ function MdDialogProvider($$interimElementProvider) {
         var startSymbol = $interpolate.startSymbol();
         var endSymbol = $interpolate.endSymbol();
         var theme = startSymbol + (options.themeWatch ? '' : '::') + 'theme' + endSymbol;
-        return '<div class="md-dialog-container" tabindex="-1" md-theme="' + theme + '">' + validatedTemplate(template) + '</div>';
+        var themeAttr = (options.hasTheme) ? 'md-theme="'+theme+'"': '';
+        return '<div class="md-dialog-container" tabindex="-1" ' + themeAttr + '>' + validatedTemplate(template) + '</div>';
 
         /**
          * The specified template should contain a <md-dialog> wrapper element....
@@ -857,7 +860,9 @@ function MdDialogProvider($$interimElementProvider) {
 
       var themeCtrl = targetEl && targetEl.controller('mdTheme');
 
-      if (!themeCtrl) {
+      options.hasTheme = (!!themeCtrl);
+
+      if (!options.hasTheme) {
         return;
       }
 
