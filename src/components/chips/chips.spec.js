@@ -12,6 +12,8 @@ describe('<md-chips>', function() {
     '<md-chips ng-model="items" md-on-remove="removeChip($chip, $index, $event)"></md-chips>';
   var CHIP_SELECT_TEMPLATE =
     '<md-chips ng-model="items" md-on-select="selectChip($chip)"></md-chips>';
+  var CHIP_NG_CHANGE_TEMPLATE =
+    '<md-chips ng-model="items" ng-change="onModelChange(items)"></md-chips>';
   var CHIP_READONLY_TEMPLATE =
     '<md-chips ng-model="items" readonly="isReadonly"></md-chips>';
   var CHIP_READONLY_AUTOCOMPLETE_TEMPLATE =
@@ -204,6 +206,27 @@ describe('<md-chips>', function() {
         expect(scope.removeChip.calls.mostRecent().args[2].type).toBe('click');
       });
 
+      it('should trigger ng-change on chip addition/removal', function() {
+        var element = buildChips(CHIP_NG_CHANGE_TEMPLATE);
+        var ctrl = element.controller('mdChips');
+
+        scope.onModelChange = jasmine.createSpy('onModelChange');
+
+        element.scope().$apply(function() {
+          ctrl.chipBuffer = 'Melon';
+          simulateInputEnterKey(ctrl);
+        });
+        expect(scope.onModelChange).toHaveBeenCalled();
+        expect(scope.onModelChange.calls.mostRecent().args[0].length).toBe(4);
+
+        element.scope().$apply(function() {
+          ctrl.removeChip(0);
+        });
+        expect(scope.onModelChange).toHaveBeenCalled();
+        expect(scope.onModelChange.calls.mostRecent().args[0].length).toBe(3);
+      });
+
+
       it('should call the select method when selecting a chip', function() {
         var element = buildChips(CHIP_SELECT_TEMPLATE);
         var ctrl = element.controller('mdChips');
@@ -238,6 +261,25 @@ describe('<md-chips>', function() {
           input.triggerHandler('blur');
 
           expect(scope.items.length).toBe(4);
+        });
+
+        it('should allow adding the first chip on blur when required exists', function() {
+          scope.items = [];
+          var template =
+              '<form name="form">' +
+              ' <md-chips name="chips" ng-required="true" ng-model="items" md-add-on-blur="true"></md-chips>' +
+              '</form>';
+
+          var element = buildChips(template);
+          var ctrl = element.find('md-chips').controller('mdChips');
+
+          element.scope().$apply(function() {
+            ctrl.chipBuffer = 'Test';
+          });
+          element.find('input').triggerHandler('blur');
+
+          expect(scope.form.chips.$error['required']).toBeUndefined();
+          expect(scope.items).toEqual(['Test']);
         });
 
         it('should not append a new chip if the limit has reached', function() {
@@ -1055,6 +1097,59 @@ describe('<md-chips>', function() {
 
       });
 
+      describe('ng-required', function() {
+        beforeEach(function() {
+          // Clear default items to test the required chips functionality
+          scope.items = [];
+        });
+
+        it('should set the required error when chips is compiled with an empty array', function() {
+          var template =
+              '<form name="form">' +
+              '<md-chips name="chips" ng-required="true" ng-model="items"></md-chips>' +
+              '</form>';
+
+          var element = buildChips(template);
+          element.scope().$apply();
+
+          expect(scope.form.chips.$error['required']).toBe(true);
+        });
+
+        it('should unset the required error when the first chip is added', function() {
+          var template =
+              '<form name="form">' +
+              '<md-chips name="chips" ng-required="true" ng-model="items"></md-chips>' +
+              '</form>';
+
+          var element = buildChips(template);
+          var ctrl = element.find('md-chips').controller('mdChips');
+
+          element.scope().$apply(function() {
+            ctrl.chipBuffer = 'Test';
+            simulateInputEnterKey(ctrl);
+          });
+
+          expect(scope.form.chips.$error['required']).toBeUndefined();
+        });
+
+        it('should set the required when the last chip is removed', function() {
+          scope.items = ['test'];
+          var template =
+              '<form name="form">' +
+              '<md-chips name="chips" required ng-model="items"></md-chips>' +
+              '</form>';
+
+          var element = buildChips(template);
+          var ctrl = element.find('md-chips').controller('mdChips');
+
+          element.scope().$apply(function() {
+            ctrl.removeChip(0);
+          });
+
+          expect(scope.form.chips.$error['required']).toBe(true);
+        });
+      });
+
       describe('focus functionality', function() {
         var element, ctrl;
 
@@ -1614,7 +1709,7 @@ describe('<md-chips>', function() {
       return scope.fruits.filter(function(item) {
         return item.toLowerCase().indexOf(searchText.toLowerCase()) === 0;
       });
-    }
+    };
   }
 
   function simulateInputEnterKey(ctrl) {
