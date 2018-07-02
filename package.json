@@ -1,6 +1,6 @@
 {
   "name": "angular-material-source",
-  "version": "1.1.9",
+  "version": "1.1.10",
   "description": "The AngularJS Material project is an implementation of Material Design in AngularJS. This project provides a set of reusable, well-tested, and accessible Material Design UI components. AngularJS Material is supported internally at Google by the AngularJS, Material Design UX and other product teams.",
   "keywords": "client-side, browser, material, material-design, design, angularjs, angular.js, css, components, google",
   "homepage": "https://material.angularjs.org",
@@ -42,7 +42,7 @@
     "glob": "~7.0.5",
     "gulp": "^3.9.1",
     "gulp-add-src": "^0.2.0",
-    "gulp-autoprefixer": "^3.1.0",
+    "gulp-autoprefixer": "^5.0.0",
     "gulp-concat": "^2.2.0",
     "gulp-connect": "^4.1.0",
     "gulp-cssnano": "^2.1.2",
@@ -88,5 +88,14 @@
     "test:fast": "gulp karma-fast",
     "test:full": "gulp karma",
     "lint": "eslint ."
-  }
+  },
+  "browserslist": [
+    "> 0.5%",
+    "last 2 versions",
+    "Firefox ESR",
+    "not ie <= 10",
+    "not ie_mob <= 10",
+    "not bb <= 10",
+    "not op_mob <= 12.1"
+  ]
 }
