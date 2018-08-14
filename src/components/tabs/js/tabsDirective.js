@@ -89,6 +89,10 @@
  * @param {boolean=} md-no-select-click When true, click events will not be fired when the value of
  *  `md-active` on an `md-tab` changes. This is useful when using tabs with UI-Router's child
  *  states, as triggering a click event in that case can cause an extra tab change to occur.
+ * @param {string=} md-navigation-hint Attribute to override the default `tablist` navigation hint
+ *  that screen readers will announce to provide instructions for navigating between tabs. This is
+ *  desirable when you want the hint to be in a different language. Default is "Use the left and
+ *  right arrow keys to navigate between tabs".
  *
  * @usage
  * <hljs lang="html">
@@ -118,6 +122,7 @@ angular
 function MdTabs ($$mdSvgRegistry) {
   return {
     scope:            {
+      navigationHint: '@?mdNavigationHint',
       selectedIndex: '=?mdSelected'
     },
     template:         function (element, attr) {
@@ -146,6 +151,7 @@ function MdTabs ($$mdSvgRegistry) {
             '<md-icon md-svg-src="'+ $$mdSvgRegistry.mdTabsArrow +'"></md-icon> ' +
           '</md-next-button> ' +
           '<md-tabs-canvas ' +
+              'tabindex="{{ $mdTabsCtrl.hasFocus ? -1 : 0 }}" ' +
               'ng-focus="$mdTabsCtrl.redirectFocus()" ' +
               'ng-class="{ ' +
                   '\'md-paginated\': $mdTabsCtrl.shouldPaginate, ' +
@@ -155,7 +161,8 @@ function MdTabs ($$mdSvgRegistry) {
             '<md-pagination-wrapper ' +
                 'ng-class="{ \'md-center-tabs\': $mdTabsCtrl.shouldCenterTabs }" ' +
                 'md-tab-scroll="$mdTabsCtrl.scroll($event)" ' +
-                'role="tablist"> ' +
+                'role="tablist" ' +
+                'aria-label="{{::$mdTabsCtrl.navigationHint}}">' +
               '<md-tab-item ' +
                   'tabindex="{{ tab.isActive() ? 0 : -1 }}" ' +
                   'class="md-tab" ' +
@@ -184,6 +191,8 @@ function MdTabs ($$mdSvgRegistry) {
               '<md-dummy-tab ' +
                   'class="md-tab" ' +
                   'tabindex="-1" ' +
+                  'ng-focus="$mdTabsCtrl.hasFocus = true" ' +
+                  'ng-blur="$mdTabsCtrl.hasFocus = false" ' +
                   'ng-repeat="tab in $mdTabsCtrl.tabs" ' +
                   'md-tabs-template="::tab.label" ' +
                   'md-scope="::tab.parent"></md-dummy-tab> ' +
