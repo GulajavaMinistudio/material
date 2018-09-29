@@ -1,13 +1,23 @@
-# Material Design for AngularJS Apps [![Build Status](https://travis-ci.org/angular/material.svg)](https://travis-ci.org/angular/material)
+# Material Design for AngularJS Apps
+[![npm version](https://badge.fury.io/js/angular-material.svg)](https://www.npmjs.com/package/angular-material)
+[![Build Status](https://travis-ci.org/angular/material.svg)](https://travis-ci.org/angular/material)
+[![Gitter](https://badges.gitter.im/angular/material2.svg)](https://gitter.im/angular/material?utm_source=badge&utm_medium=badge)
 
-[Material Design](https://material.io/) is a specification for a
+[Material Design](https://material.io/archive/guidelines/) is a specification for a
 unified system of visual, motion, and interaction design that adapts across different devices. Our
 goal is to deliver a lean, lightweight set of AngularJS-native UI elements that implement the
 material design specification for use in AngularJS single-page applications (SPAs).
 
+**AngularJS Material** is an implementation of Google's 
+[Material Design Specification (2014-2017)](https://material.io/archive/guidelines/material-design/)
+for [AngularJS](https://angularjs.org) developers.
+
+For an implementation of the [Material Design Specification (2018+)](https://material.io/design/),
+please see the [Angular Material](https://github.com/angular/material2) project which is built for
+[Angular](https://angular.io) developers.
+
 ![venn diagram](https://cloud.githubusercontent.com/assets/210413/5077572/30dfc2f0-6e6a-11e4-9723-07c918128f4f.png)
 
-AngularJS Material is an implementation of Google's [Material Design Specification](https://material.io/guidelines/material-design/).
 AngularJS Material includes a rich set of reusable, well-tested, and accessible UI components.
 
 Quick Links:
@@ -21,7 +31,7 @@ Quick Links:
 Please note that using AngularJS Material requires the use of **[AngularJS](https://angularjs.org/)
 1.4.x** or higher.
 
-AngularJS Material is targeted for the browser versions defined in the `broswerslist` field
+AngularJS Material is targeted for the browser versions defined in the `browserslist` field
 of our [package.json](package.json). Below is a screenshot from 
 [browserl.ist](http://browserl.ist/?q=%3E+0.5%25%2C+last+2+versions%2C+Firefox+ESR%2C+not+ie+%3C%3D+10%2C+not+ie_mob+%3C%3D+10%2C+not+bb+%3C%3D+10%2C+not+op_mob+%3C%3D+12.1)
 that provides a visual representation of this configuration:
@@ -150,7 +160,7 @@ CDN versions of AngularJS Material are now available.
 
 With the Google CDN, you will not need to download local copies of the distribution files. Instead
 simply reference the CDN urls to easily use those remote library files. This is especially useful
-when using online tools such as [CodePen](http://codepen.io/), [Plunkr](http://plnkr.co/), or
+when using online tools such as [CodePen](http://codepen.io/), [Plunker](http://plnkr.co/), or
 [JSFiddle](http://jsfiddle.net/).
 
 ```html
@@ -203,4 +213,3 @@ Once you have all the necessary assets installed, add `ngMaterial` and `ngMessag
 ```javascript
 angular.module('myApp', ['ngMaterial', 'ngMessages']);
 ```
-
