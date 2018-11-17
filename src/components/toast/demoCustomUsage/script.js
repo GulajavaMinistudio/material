@@ -10,6 +10,7 @@
 
   function AppCtrl($mdToast, $log) {
     var ctrl = this;
+    var message = 'Custom toast';
 
     ctrl.showCustomToast = function() {
       $mdToast.show({
@@ -17,6 +18,8 @@
         position: 'top right',
         controller: 'ToastCtrl',
         controllerAs: 'ctrl',
+        bindToController: true,
+        locals: {toastMessage: message},
         templateUrl: 'toast-template.html'
       }).then(function(result) {
         if (result === ACTION_RESOLVE) {
@@ -34,7 +37,7 @@
     };
   }
 
-  function ToastCtrl($mdToast, $mdDialog, $document) {
+  function ToastCtrl($mdToast, $mdDialog, $document, $scope) {
     var ctrl = this;
     ctrl.keyListenerConfigured = false;
     ctrl.undoKey = UNDO_KEY;
@@ -70,7 +73,7 @@
     };
 
     /**
-     * @param {KeyboardEvent} event
+     * @param {KeyboardEvent} event to handle
      */
     function handleKeyDown(event) {
       if (event.key === 'Escape') {
@@ -92,9 +95,14 @@
     }
 
     function removeActionKeyListener() {
-      $document.off('keydown');
-      ctrl.keyListenerConfigured = false;
+      if (ctrl.keyListenerConfigured) {
+        $document.off('keydown');
+        ctrl.keyListenerConfigured = false;
+      }
     }
-  }
 
+    $scope.$on('$destroy', function() {
+      removeActionKeyListener();
+    });
+  }
 })();
