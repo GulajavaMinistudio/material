@@ -7,10 +7,8 @@ const kDisallowedFunctions = [
   // Allow xit/xdescribe --- disabling tests is okay
   'fit',
   'iit',
-  //'xit',
   'fdescribe',
   'ddescribe',
-  //'xdescribe',
   'describe.only',
   'it.only'
 ];
@@ -43,7 +41,7 @@ function checkFile(fileContents, disallowed) {
 
 exports.task = function() {
   let failures = void 0;
-  return gulp.src(['src/**/*.spec.js', 'test/**/*-spec.js' ])
+  return gulp.src(['src/**/*.spec.js', 'test/**/*-spec.js'])
       .pipe(through2.obj(function(file, enc, next) {
         const errors = checkFile(file.contents.toString(), kDisallowedFunctions);
         if (errors) {

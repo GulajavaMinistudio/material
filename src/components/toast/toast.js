@@ -337,7 +337,7 @@ function MdToastProvider($$interimElementProvider) {
     .addPreset('simple', {
       argOption: 'textContent',
       methods: ['textContent', 'content', 'action', 'actionKey', 'actionHint', 'highlightAction',
-                'highlightClass', 'theme', 'parent', 'dismissHint' ],
+                'highlightClass', 'theme', 'parent', 'dismissHint'],
       options: /* @ngInject */ function($mdToast, $mdTheming) {
         return {
           template:
@@ -470,7 +470,7 @@ function MdToastProvider($$interimElementProvider) {
       options.element = element;
 
       options.onSwipe = function(ev, gesture) {
-        //Add the relevant swipe class to the element so it can animate correctly
+        // Add the relevant swipe class to the element so it can animate correctly
         var swipe = ev.type.replace('$md.','');
         var direction = swipe.replace('swipe', '');
 

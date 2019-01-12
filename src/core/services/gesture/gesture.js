@@ -24,7 +24,7 @@ var isInitialized = false;
  * AngularJS Material Gesture handling for touch devices. This module replaced the usage of the hammerjs library.
  */
 angular
-  .module('material.core.gestures', [ ])
+  .module('material.core.gestures', [])
   .provider('$mdGesture', MdGestureProvider)
   .factory('$$MdGestureHandler', MdGestureHandler)
   .run(attachToDocument);
@@ -238,7 +238,7 @@ function MdGesture($$MdGestureHandler, $$rAF, $timeout) {
         this.state.pos = {x: pointer.x, y: pointer.y};
         this.state.timeout = $timeout(angular.bind(this, function holdDelayFn() {
           this.dispatchEvent(ev, '$md.hold');
-          this.cancel(); //we're done!
+          this.cancel(); // we're done!
         }), this.state.options.delay, false);
       },
       onMove: function (ev, pointer) {
@@ -518,7 +518,7 @@ function MdGestureHandler() {
     eventPointer = eventPointer || pointer;
     var eventObj;
 
-    if (eventType === 'click' || eventType === 'mouseup' || eventType === 'mousedown' ) {
+    if (eventType === 'click' || eventType === 'mouseup' || eventType === 'mousedown') {
       eventObj = document.createEvent('MouseEvents');
       eventObj.initMouseEvent(
         eventType, true, true, window, srcEvent.detail,
@@ -543,7 +543,7 @@ function MdGestureHandler() {
  * Attach Gestures: hook document and check shouldHijack clicks
  * @ngInject
  */
-function attachToDocument( $mdGesture, $$MdGestureHandler ) {
+function attachToDocument($mdGesture, $$MdGestureHandler) {
   if (disableAllGestures) {
     return;
   }
@@ -554,7 +554,7 @@ function attachToDocument( $mdGesture, $$MdGestureHandler ) {
     return document.body.contains(node);
   });
 
-  if (!isInitialized && $mdGesture.isHijackingClicks ) {
+  if (!isInitialized && $mdGesture.isHijackingClicks) {
     /*
      * If hijack clicks is true, we preventDefault any click that wasn't
      * sent by AngularJS Material. This is because on older Android & iOS, a false, or 'ghost',
@@ -631,7 +631,7 @@ function attachToDocument( $mdGesture, $$MdGestureHandler ) {
     var handler;
     for (var name in HANDLERS) {
       handler = HANDLERS[name];
-      if( handler instanceof $$MdGestureHandler ) {
+      if (handler instanceof $$MdGestureHandler) {
 
         if (handlerEvent === 'start') {
           // Run cancel to reset any handlers' state

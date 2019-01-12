@@ -6,7 +6,7 @@
  * Button
  */
 angular
-    .module('material.components.button', [ 'material.core' ])
+    .module('material.components.button', ['material.core'])
     .directive('mdButton', MdButtonDirective)
     .directive('a', MdAnchorDirective);
 
@@ -133,7 +133,7 @@ function MdButtonDirective($mdButtonInkRipple, $mdTheming, $mdAria, $mdInteracti
     if (isAnchor(attr)) {
       return '<a class="md-button" ng-transclude></a>';
     } else {
-      //If buttons don't have type="button", they will submit forms automatically.
+      // If buttons don't have type="button", they will submit forms automatically.
       var btnType = (typeof attr.type === 'undefined') ? 'button' : attr.type;
       return '<button class="md-button" type="' + btnType + '" ng-transclude></button>';
     }
@@ -148,7 +148,7 @@ function MdButtonDirective($mdButtonInkRipple, $mdTheming, $mdAria, $mdInteracti
 
     // For anchor elements, we have to set tabindex manually when the
     // element is disabled
-    if (isAnchor(attr) && angular.isDefined(attr.ngDisabled) ) {
+    if (isAnchor(attr) && angular.isDefined(attr.ngDisabled)) {
       scope.$watch(attr.ngDisabled, function(isDisabled) {
         element.attr('tabindex', isDisabled ? -1 : 0);
       });

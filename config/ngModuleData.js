@@ -28,7 +28,7 @@ function buildScanner(pattern) {
 
     if (depsMatch) {
       dependencies = depsMatch.split(/\s*,\s*/).map(function(dep) {
-        dep = dep.trim().slice(1, -1); //remove quotes
+        dep = dep.trim().slice(1, -1); // remove quotes
         return dep;
       });
     }
@@ -36,12 +36,12 @@ function buildScanner(pattern) {
     return match ? {
       name         : moduleName || '',
       module       : moduleName || '',
-      dependencies : dependencies || [ ]
+      dependencies : dependencies || []
     } : null;
   };
 }
 
 module.exports = {
-  material : buildScanner( MATERIAL_ONLY ),
-  any      : buildScanner( ANY )
+  material : buildScanner(MATERIAL_ONLY),
+  any      : buildScanner(ANY)
 };

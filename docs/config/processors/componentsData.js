@@ -32,7 +32,7 @@ function buildDocData(doc, extraData, descriptor) {
   const filePath = doc.fileInfo.filePath;
   const indexOfBasePath = filePath.indexOf(basePathFromProjectRoot);
   const path = filePath.substr(indexOfBasePath + basePathFromProjectRoot.length, filePath.length);
-  
+
   return _.assign({
     name: doc.name,
     type: doc.docType,
@@ -80,7 +80,7 @@ module.exports = function componentsGenerateProcessor() {
         });
 
       })
-      .filter() //remove null items
+      .filter() // remove null items
       .value();
 
     const EXPOSED_CORE_SERVICES = '$mdMedia';

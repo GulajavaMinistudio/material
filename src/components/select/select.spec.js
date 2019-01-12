@@ -154,7 +154,7 @@ describe('<md-select>', function() {
       $rootScope.onChange = function() { changed = true; };
       $rootScope.val = { id: 1, name: 'Bob' };
 
-      var opts = [ { id: 1, name: 'Bob' }, { id: 2, name: 'Alice' } ];
+      var opts = [{ id: 1, name: 'Bob' }, { id: 2, name: 'Alice' }];
       var select = setupSelect('ng-model="$root.val" ng-change="onChange()" ng-model-options="{trackBy: \'$value.id\'}"', opts);
       expect(changed).toBe(false);
 
@@ -217,7 +217,7 @@ describe('<md-select>', function() {
       $material.flushInterimElement();
 
       // FIXME- does not work with minified, jquery
-      //expect($document[0].activeElement).toBe(select[0]);
+      // expect($document[0].activeElement).toBe(select[0]);
 
       // Clean up the DOM after the test.
       $document[0].body.removeChild(select[0]);

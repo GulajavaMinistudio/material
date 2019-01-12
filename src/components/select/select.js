@@ -244,7 +244,7 @@ function SelectDirective($mdSelect, $mdUtil, $mdConstant, $mdTheming, $mdAria, $
     element.empty().append(valueEl);
     element.append(selectTemplate);
 
-    if(!attr.tabindex){
+    if (!attr.tabindex){
       attr.$set('tabindex', 0);
     }
 
@@ -1406,7 +1406,7 @@ function SelectProvider($$interimElementProvider) {
 
         angular.extend(options, {
           isRemoved: false,
-          target: angular.element(options.target), //make sure it's not a naked dom node
+          target: angular.element(options.target), // make sure it's not a naked DOM node
           parent: angular.element(options.parent),
           selectEl: selectEl,
           contentEl: element.find('md-content'),
@@ -1572,8 +1572,8 @@ function SelectProvider($$interimElementProvider) {
         }
 
         function checkCloseMenu(ev) {
-          if (ev && ( ev.type == 'click') && (ev.currentTarget != dropDown[0])) return;
-          if ( mouseOnScrollbar() ) return;
+          if (ev && (ev.type == 'click') && (ev.currentTarget != dropDown[0])) return;
+          if (mouseOnScrollbar()) return;
 
           var option = $mdUtil.getClosest(ev.target, 'md-option');
           if (option && option.hasAttribute && !option.hasAttribute('disabled')) {

@@ -112,7 +112,7 @@ function MdProgressCircularDirective($window, $mdProgressCircular, $mdTheming,
 
     // If the mode is indeterminate, it doesn't need to
     // wait for the next digest. It can start right away.
-    if(scope.mdMode === MODE_INDETERMINATE){
+    if (scope.mdMode === MODE_INDETERMINATE){
       startIndeterminateAnimation();
     }
 
@@ -319,7 +319,7 @@ function MdProgressCircularDirective($window, $mdProgressCircular, $mdTheming,
    * @returns {number} Stroke length for progres circle
    */
   function getDashLength(diameter, strokeWidth, value, limit) {
-    return (diameter - strokeWidth) * $window.Math.PI * ( (3 * (limit || 100) / 100) - (value/100) );
+    return (diameter - strokeWidth) * $window.Math.PI * ((3 * (limit || 100) / 100) - (value/100));
   }
 
   /**
