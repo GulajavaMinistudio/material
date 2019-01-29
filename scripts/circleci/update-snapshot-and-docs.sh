@@ -4,6 +4,9 @@ ARG_DEFS=(
   "--sha=(.*)"
 )
 
+git config --global user.email "ngmaterial@googlegroups.com"
+git config --global user.name "ngMaterial Bot"
+
 function init {
   # If --git-push-dryrun or --verbose are set, be sure to export them
   # so they are set in all the other scripts too
@@ -12,12 +15,7 @@ function init {
 }
 
 function run {
-  if [[ "$CIRCLE_PULL_REQUEST" != "false" ]]; then
-    echo "-- This is a pull request; not pushing out build."
-    exit 0
-  fi
-
-  cd ../
+  cd ../../
 
   NEW_VERSION="$(readJsonProp "package.json" "version")-master-$(echo $SHA | head -c 7)"
 
@@ -25,4 +23,4 @@ function run {
   ./scripts/snapshot-docs-site.sh --version=$NEW_VERSION
 }
 
-source $(dirname $0)/utils.inc
+source $(dirname $0)/../utils.inc

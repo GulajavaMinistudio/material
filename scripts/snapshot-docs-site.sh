@@ -30,13 +30,13 @@ function run {
 
   cd code.material.angularjs.org
 
-  # GitHub token specified as Travis environment variable
+  # GitHub token with push permission specified as environment variable
   git config user.name "${commitAuthorName}"
   git config user.email "${commitAuthorEmail}"
   git config credential.helper "store --file=.git/credentials"
   echo "https://${ANGULARJS_MATERIAL_DOCS_SITE_TOKEN}:@github.com" > .git/credentials
 
-  echo "-- Commiting snapshot..."
+  echo "-- Committing snapshot..."
   git add -A
   git commit -m "snapshot: $VERSION"
 

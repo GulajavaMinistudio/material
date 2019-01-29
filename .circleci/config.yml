@@ -21,7 +21,7 @@ var_4: &checkout_code
   checkout:
     # After checkout, rebase on top of master. By default, PRs are not rebased on top of master,
     # which we want. See https://discuss.circleci.com/t/1662
-    post: git pull --ff-only origin "refs/pull/${CI_PULL_REQUEST//*pull\//}/merge"
+    post: git pull --ff-only origin "refs/pull/${CIRCLE_PULL_REQUEST//*pull\//}/merge"
 
 # Restores the cache that could be available for the current lock file. The cache
 # includes the node modules.
@@ -52,6 +52,14 @@ var_8: &rebuild_node_sass
 var_9: &store_junit_test_results
   store_test_results:
     path: ./artifacts/junit
+
+# Branch filter that we can specify for jobs that should only run on publish branches. This filter
+# is used to ensure that not all upstream branches will be published as Github builds
+# (e.g. revert branches, feature branches)
+var_10: &publish_branches_filter
+  branches:
+    only:
+      - master
 
 # -----------------------------
 # Container version of CircleCI
@@ -137,6 +145,18 @@ jobs:
       - run: ./scripts/circleci/run-tests.sh
       - *store_junit_test_results
 
+  # ------------------------------------------------------------------------------------------
+  # Jobs that snapshot the `master` branch and update the docs on commits to master
+  # ------------------------------------------------------------------------------------------
+  update_and_snapshot_docs:
+    <<: *job_defaults
+    steps:
+      - *checkout_code
+      - *restore_cache
+      - *npm_install
+      - run: sudo npm i -g gulp@3.9
+      - run: ./scripts/circleci/update-snapshot-and-docs.sh --sha=${CIRCLE_SHA1}
+
 # ----------------------------------------------------------------------------------------
 # Workflow definitions. A workflow usually groups multiple jobs together. This is useful if
 # one job depends on another.
@@ -150,14 +170,26 @@ workflows:
       - lint
 
   # Build and test workflow. A workflow includes multiple jobs that run in parallel. All jobs
-  # that build and test source code should be part of this workflow
-  build:
+  # that build and test source code should be part of this workflow.
+  build_and_test:
     jobs:
       - build
-
-  unit_tests:
-    jobs:
-      - test_angularjs_1.5
-      - test_angularjs_1.6
-      - test_angularjs_1.7
-      - test_angularjs_snapshot
+      - test_angularjs_1.5:
+          requires:
+            - build
+      - test_angularjs_1.6:
+          requires:
+            - build
+      - test_angularjs_1.7:
+          requires:
+            - build
+      - test_angularjs_snapshot:
+          requires:
+            - build
+      - update_and_snapshot_docs:
+            filters: *publish_branches_filter
+            requires:
+              - test_angularjs_1.5
+              - test_angularjs_1.6
+              - test_angularjs_1.7
+              - test_angularjs_snapshot
