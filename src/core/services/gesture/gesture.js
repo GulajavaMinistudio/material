@@ -17,9 +17,12 @@ var lastLabelClickPos = null;
 // Used to attach event listeners once when multiple ng-apps are running.
 var isInitialized = false;
 
-var userAgent = navigator.userAgent || navigator.vendor || window.opera;
-var isIos = userAgent.match(/ipad|iphone|ipod/i);
-var isAndroid = userAgent.match(/android/i);
+// Support material-tools builds.
+if (window.navigator) {
+  var userAgent = window.navigator.userAgent || window.navigator.vendor || window.opera;
+  var isIos = userAgent.match(/ipad|iphone|ipod/i);
+  var isAndroid = userAgent.match(/android/i);
+}
 
 /**
  * @ngdoc module
@@ -576,12 +579,6 @@ function attachToDocument($mdGesture, $$MdGestureHandler) {
   if (disableAllGestures) {
     return;
   }
-
-  // Polyfill document.contains for IE11.
-  // TODO: move to util
-  document.contains || (document.contains = function (node) {
-    return document.body.contains(node);
-  });
 
   if (!isInitialized && $mdGesture.isHijackingClicks) {
     /*
