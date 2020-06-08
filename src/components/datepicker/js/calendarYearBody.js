@@ -76,7 +76,6 @@
 
     if (this.focusAfterAppend) {
       this.focusAfterAppend.classList.add(this.calendarCtrl.FOCUSED_DATE_CLASS);
-      this.focusAfterAppend.focus();
       this.focusAfterAppend = null;
     }
   };
@@ -114,8 +113,8 @@
 
     if (this.dateUtil.isMonthWithinRange(
           firstOfMonth, calendarCtrl.minDate, calendarCtrl.maxDate) &&
-      (!angular.isFunction(this.calendarCtrl.dateFilter) ||
-        this.calendarCtrl.dateFilter(firstOfMonth))) {
+      (!angular.isFunction(calendarCtrl.monthFilter) ||
+        calendarCtrl.monthFilter(firstOfMonth))) {
       var selectionIndicator = document.createElement('span');
       selectionIndicator.classList.add('md-calendar-date-selection-indicator');
       selectionIndicator.textContent = cellText;
@@ -163,7 +162,7 @@
     var firstRow = document.createElement('tr');
     var labelCell = document.createElement('td');
     labelCell.className = 'md-calendar-month-label';
-    labelCell.textContent = year;
+    labelCell.textContent = String(year);
     firstRow.appendChild(labelCell);
 
     for (i = 0; i < 6; i++) {

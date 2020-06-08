@@ -752,4 +752,22 @@ describe('util', function() {
       expect($mdUtil.uniq(myArray)).toEqual([1, 2, 3, 4]);
     });
   });
+
+  describe('sanitize', function() {
+    var $mdUtil;
+
+    beforeEach(inject(function(_$mdUtil_) {
+      $mdUtil = _$mdUtil_;
+    }));
+
+    it('sanitizes + signs', function() {
+      var myText = '+98';
+      expect($mdUtil.sanitize(myText)).toEqual('\\+98');
+    });
+
+    it('sanitizes parenthesis', function() {
+      var myText = '()';
+      expect($mdUtil.sanitize(myText)).toEqual('\\(\\)');
+    });
+  });
 });

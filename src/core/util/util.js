@@ -82,7 +82,7 @@ function UtilFactory($document, $timeout, $compile, $rootScope, $$mdAnimate, $in
     /**
      * Cross-version compatibility method to retrieve an option of a ngModel controller,
      * which supports the breaking changes in the AngularJS snapshot (SHA 87a2ff76af5d0a9268d8eb84db5755077d27c84c).
-     * @param {!angular.ngModelCtrl} ngModelCtrl
+     * @param {!ngModel.NgModelController} ngModelCtrl
      * @param {!string} optionName
      * @returns {Object|undefined}
      */
@@ -179,12 +179,16 @@ function UtilFactory($document, $timeout, $compile, $rootScope, $$mdAnimate, $in
       return $mdUtil.clientRect(element, offsetParent, true);
     },
 
-    // Annoying method to copy nodes to an array, thanks to IE
+    /**
+     * Annoying method to copy nodes to an array, thanks to IE.
+     * @param nodes
+     * @return {Array}
+     */
     nodesToArray: function(nodes) {
+      var results = [], i;
       nodes = nodes || [];
 
-      var results = [];
-      for (var i = 0; i < nodes.length; ++i) {
+      for (i = 0; i < nodes.length; ++i) {
         results.push(nodes.item(i));
       }
       return results;
@@ -918,8 +922,8 @@ function UtilFactory($document, $timeout, $compile, $rootScope, $$mdAnimate, $in
      *
      *    $mdUtil.uniq(myArray) => [1, 2, 3, 4]
      *
-     * @param {array} array The array whose unique values should be returned.
-     * @returns {array} A copy of the array containing only unique values.
+     * @param {Array} array The array whose unique values should be returned.
+     * @returns {Array|void} A copy of the array containing only unique values.
      */
     uniq: function(array) {
       if (!array) { return; }
@@ -965,7 +969,48 @@ function UtilFactory($document, $timeout, $compile, $rootScope, $$mdAnimate, $in
      * documentMode is an IE-only property
      * http://msdn.microsoft.com/en-us/library/ie/cc196988(v=vs.85).aspx
      */
-    msie: window.document.documentMode
+    msie: window.document.documentMode,
+
+    getTouchAction: function() {
+      var testEl = document.createElement('div');
+      var vendorPrefixes = ['', 'webkit', 'Moz', 'MS', 'ms', 'o'];
+
+      for (var i = 0; i < vendorPrefixes.length; i++) {
+        var prefix = vendorPrefixes[i];
+        var property = prefix ? prefix + 'TouchAction' : 'touchAction';
+        if (angular.isDefined(testEl.style[property])) {
+          return property;
+        }
+      }
+    },
+
+    /**
+     * @param {Event} event the event to calculate the bubble path for
+     * @return {EventTarget[]} the set of nodes that this event could bubble up to
+     */
+    getEventPath: function(event) {
+      var path = [];
+      var currentTarget = event.target;
+      while (currentTarget) {
+        path.push(currentTarget);
+        currentTarget = currentTarget.parentElement;
+      }
+      if (path.indexOf(window) === -1 && path.indexOf(document) === -1)
+        path.push(document);
+      if (path.indexOf(window) === -1)
+        path.push(window);
+      return path;
+    },
+
+    /**
+     * Gets the string the user has entered and removes Regex identifiers
+     * @param {string} term
+     * @returns {string} sanitized string
+     */
+    sanitize: function(term) {
+      if (!term) return term;
+      return term.replace(/[\\^$*+?.()|{}[]/g, '\\$&');
+    }
   };
 
   // Instantiate other namespace utility methods
@@ -983,13 +1028,13 @@ function UtilFactory($document, $timeout, $compile, $rootScope, $$mdAnimate, $in
  * Since removing jQuery from the demos, some code that uses `element.focus()` is broken.
  * We need to add `element.focus()`, because it's testable unlike `element[0].focus`.
  */
-
 angular.element.prototype.focus = angular.element.prototype.focus || function() {
   if (this.length) {
     this[0].focus();
   }
   return this;
 };
+
 angular.element.prototype.blur = angular.element.prototype.blur || function() {
   if (this.length) {
     this[0].blur();

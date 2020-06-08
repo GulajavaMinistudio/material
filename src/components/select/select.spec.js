@@ -119,13 +119,14 @@ describe('<md-select>', function() {
       expect(ownsId).toBeFalsy();
     });
 
-    it('sets aria-owns between the select and the container if element moved outside parent', function() {
+    it('sets aria-owns between the select and the listbox if element moved outside parent', function() {
       var select = setupSelect('ng-model="val"').find('md-select');
       openSelect(select);
       var ownsId = select.attr('aria-owns');
       expect(ownsId).toBeTruthy();
-      var containerId = $document[0].querySelector('.md-select-menu-container').getAttribute('id');
-      expect(ownsId).toBe(containerId);
+      var listboxContentId =
+        $document[0].querySelector('.md-select-menu-container md-content').getAttribute('id');
+      expect(ownsId).toBe(listboxContentId);
     });
 
     it('calls md-on-close when the select menu closes', function() {
@@ -172,10 +173,46 @@ describe('<md-select>', function() {
     it('should not trigger ng-change without a change when using trackBy', function() {
       var changed = false;
       $rootScope.onChange = function() { changed = true; };
-      $rootScope.val = { id: 1, name: 'Bob' };
+
+      // Since we're tracking by id, ng-change shouldn't be triggered
+      // when we have two objects that are not strictly equivalent (one has a 'randomAddedProperty')
+      // but that have the same tracked field
+      $rootScope.val = { id: 1, name: 'Bob', randomAddedProperty: 'random' };
 
       var opts = [{ id: 1, name: 'Bob' }, { id: 2, name: 'Alice' }];
       var select = setupSelect('ng-model="$root.val" ng-change="onChange()" ng-model-options="{trackBy: \'$value.id\'}"', opts);
+      expect(changed).toBe(false);
+
+      openSelect(select);
+      clickOption(select, 1);
+      $material.flushInterimElement();
+      expect($rootScope.val.id).toBe(2);
+      expect(changed).toBe(true);
+    });
+
+    it('should support trackBy to be updated', function() {
+      var changed = false;
+      $rootScope.onChange = function() { changed = true; };
+      $rootScope.useTrackBy = false;
+      $rootScope.trackByOption = '$value.id';
+
+      var opts = [{ id: 1, name: 'Bob' }, { id: 2, name: 'Alice' }];
+      $rootScope.val = opts[0];
+      var select = setupSelect('ng-model="$root.val"' +
+        'ng-change="onChange()"' +
+        'ng-model-options="{ trackBy: $root.useTrackBy ? $root.trackByOption : undefined }"', opts);
+      expect(changed).toBe(false);
+
+      $rootScope.$apply(function() {
+        $rootScope.useTrackBy = true;
+        // Since we're tracking by id, ng-change shouldn't be triggered
+        // when we have two objects that are not strictly equivalent (one has a 'randomAddedProperty')
+        // but that have the same tracked field
+        $rootScope.val = { id: 1, name: 'Bob', randomAddedProperty: 'random' };
+      });
+      openSelect(select);
+      clickOption(select, 0);
+      $material.flushInterimElement();
       expect(changed).toBe(false);
 
       openSelect(select);
@@ -334,6 +371,41 @@ describe('<md-select>', function() {
         $timeout.flush();
 
         expect($rootScope.testForm.defaultSelect.$error).toEqual({});
+      });
+    });
+
+    describe('mdSelectOnlyOption support', function() {
+      var $rootScope, $timeout;
+
+      beforeEach(inject(function($injector) {
+        $rootScope = $injector.get('$rootScope');
+        $timeout = $injector.get('$timeout');
+      }));
+
+      it('should select the first option if it only has one option', function() {
+        setupSelect('ng-model="val" md-select-only-option', [1]);
+        $timeout.flush();
+        expect($rootScope.val).toBe(1);
+      });
+
+      it('should work with `multiple`', function() {
+        setupSelectMultiple('ng-model="val" md-select-only-option', [1]);
+        $timeout.flush();
+        expect($rootScope.val).toEqual([1]);
+      });
+
+      it('should not do anything if there is more than one option', function() {
+        setupSelect('ng-model="val" md-select-only-option', [1, 2, 3]);
+        $timeout.flush();
+        expect($rootScope.val).toBeUndefined();
+      });
+
+      it('should keep the ngModel pristine', function() {
+        var el = setupSelect('ng-model="val" md-select-only-option', [1]);
+        var ngModel = el.find('md-select').controller('ngModel');
+
+        $timeout.flush();
+        expect(ngModel.$pristine).toBe(true);
       });
     });
   });
@@ -664,6 +736,15 @@ describe('<md-select>', function() {
       it('renders nothing if no initial value is set', function() {
         var el = setupSelect('ng-model="$root.model"', ['a','b','c']);
         expect(selectedOptions(el).length).toBe(0);
+      });
+
+      it('supports ng-selected on md-options', function() {
+        var el = setupSelect('ng-model="$root.model"', ['a','b','c'], false, $rootScope, null,
+          '$index === 2');
+
+        expect(selectedOptions(el).length).toBe(1);
+        expect(el.find('md-option').eq(2).attr('selected')).toBe('selected');
+        expect($rootScope.model).toBe('c');
       });
 
       it('supports circular references', function() {
@@ -1341,37 +1422,128 @@ describe('<md-select>', function() {
       expect($log.warn).not.toHaveBeenCalled();
     }));
 
-    it('sets up the aria-expanded attribute', function() {
+    it('does not overwrite user provided aria-labelledby', function() {
+      var select = setupSelect('ng-model="someVal" placeholder="Hello world" aria-labelledby="label"',
+        null, true).find('md-select');
+      expect(select.attr('aria-labelledby')).toBe('label');
+    });
 
-      expect(el.attr('aria-expanded')).toBe('false');
+    it('sets up the aria-expanded attribute', function() {
+      expect(el.attr('aria-expanded')).toBe(undefined);
       openSelect(el);
       expect(el.attr('aria-expanded')).toBe('true');
 
       closeSelect(el);
       $material.flushInterimElement();
 
-      expect(el.attr('aria-expanded')).toBe('false');
+      expect(el.attr('aria-expanded')).toBe(undefined);
     });
 
     it('sets up the aria-multiselectable attribute', function() {
-      $rootScope.model = [1,3];
-      var el = setupSelectMultiple('ng-model="$root.model"', [1,2,3]).find('md-select');
+      $rootScope.model = [1, 3];
+      var el = setupSelectMultiple('ng-model="$root.model"', [1, 2, 3]).find('md-select');
+      var listbox = el.find('md-content');
 
-      expect(el.attr('aria-multiselectable')).toBe('true');
+      expect(listbox.attr('aria-multiselectable')).toBe('true');
     });
 
     it('sets up the aria-selected attribute', function() {
-      var el = setupSelect('ng-model="$root.model"', [1,2,3]);
+      var el = setupSelect('ng-model="$root.model"', [1, 2, 3]);
       var options = el.find('md-option');
       openSelect(el);
-      expect(options.eq(2).attr('aria-selected')).toBe('false');
+      expect(options.eq(2).attr('aria-selected')).toBe(undefined);
       clickOption(el, 2);
       expect(options.eq(2).attr('aria-selected')).toBe('true');
+    });
+
+    it('applies label element\'s text to optgroup\'s aria-label', function() {
+      $rootScope.val = [1];
+      var select = $compile(
+        '<md-input-container>' +
+        '  <label>Label</label>' +
+        '  <md-select ng-model="val" placeholder="Hello World">' +
+        '    <md-optgroup>' +
+        '      <label>stuff</label>' +
+        '      <md-option value="1">One</md-option>' +
+        '      <md-option value="2">Two</md-option>' +
+        '      <md-option value="3">Three</md-option>' +
+        '    </md-optgroup>' +
+        '  </md-select>' +
+        '</md-input-container>')($rootScope);
+
+      var optgroups = select.find('md-optgroup');
+      expect(optgroups[0].getAttribute('aria-label')).toBe('stuff');
+    });
+
+    it('applies optgroup\'s label as aria-label', function() {
+      $rootScope.val = [1];
+      var select = $compile(
+        '<md-input-container>' +
+        '  <label>Label</label>' +
+        '  <md-select ng-model="val" placeholder="Hello World">' +
+        '    <md-optgroup label="stuff">' +
+        '      <md-option value="1">One</md-option>' +
+        '      <md-option value="2">Two</md-option>' +
+        '      <md-option value="3">Three</md-option>' +
+        '    </md-optgroup>' +
+        '  </md-select>' +
+        '</md-input-container>')($rootScope);
+
+      var optgroups = select.find('md-optgroup');
+      expect(optgroups[0].getAttribute('aria-label')).toBe('stuff');
+    });
+
+    it('applies setsize and posinset when optgroups are used', function() {
+      $rootScope.val = [1];
+      var select = $compile(
+        '<md-input-container>' +
+        '  <label>Label</label>' +
+        '  <md-select ng-model="val" placeholder="Hello World">' +
+        '    <md-optgroup label="stuff">' +
+        '      <md-option value="1">One</md-option>' +
+        '      <md-option value="2">Two</md-option>' +
+        '      <md-option value="3">Three</md-option>' +
+        '    </md-optgroup>' +
+        '  </md-select>' +
+        '</md-input-container>')($rootScope);
+      $rootScope.$digest();
+
+      var options = select.find('md-option');
+      expect(options[0].getAttribute('aria-setsize')).toBe('3');
+      expect(options[0].getAttribute('aria-posinset')).toBe('1');
+    });
+
+    it('applies setsize and posinset when optgroups are used with multiple', function() {
+      $rootScope.val = [1];
+      var select = $compile(
+        '<md-input-container>' +
+        '  <label>Label</label>' +
+        '  <md-select multiple ng-model="val" placeholder="Hello World">' +
+        '    <md-optgroup label="stuff">' +
+        '      <md-option value="1">One</md-option>' +
+        '      <md-option value="2">Two</md-option>' +
+        '      <md-option value="3">Three</md-option>' +
+        '    </md-optgroup>' +
+        '  </md-select>' +
+        '</md-input-container>')($rootScope);
+      $rootScope.$digest();
+
+      var options = select.find('md-option');
+      expect(options[0].getAttribute('aria-setsize')).toBe('3');
+      expect(options[0].getAttribute('aria-posinset')).toBe('1');
+    });
+
+    it('does not apply setsize and posinset when optgroups are not used', function() {
+      var select = setupSelect('ng-model="$root.model"', [1, 2, 3]);
+      $rootScope.$digest();
+
+      var options = select.find('md-option');
+      expect(options[0].getAttribute('aria-setsize')).toBe(null);
+      expect(options[0].getAttribute('aria-posinset')).toBe(null);
     });
   });
 
   describe('keyboard controls', function() {
-
 
     afterEach(function() {
       var selectMenus = $document.find('md-select-menu');
@@ -1525,13 +1697,13 @@ describe('<md-select>', function() {
     });
   }
 
-  function setupSelect(attrs, options, skipLabel, scope, optCompileOpts) {
+  function setupSelect(attrs, options, skipLabel, scope, optCompileOpts, ngSelectedExpression) {
     var el;
     var template = '' +
       '<md-input-container>' +
         (skipLabel ? '' : '<label>Label</label>') +
         '<md-select ' + (attrs || '') + '>' +
-          optTemplate(options, optCompileOpts) +
+          optTemplate(options, optCompileOpts, ngSelectedExpression) +
         '</md-select>' +
       '</md-input-container>';
 
@@ -1550,13 +1722,21 @@ describe('<md-select>', function() {
     return toReturn;
   }
 
-  function optTemplate(options, compileOpts) {
+  /**
+   * @param {any[]=} options Array of option values to create md-options from
+   * @param {object=} compileOpts
+   * @param {object=} ngSelectedExpression If defined, sets the expression used by ng-selected.
+   * @return {string} template containing the generated md-options
+   */
+  function optTemplate(options, compileOpts, ngSelectedExpression) {
     var optionsTpl = '';
+    var ngSelectedTemplate = ngSelectedExpression ? ' ng-selected="' + ngSelectedExpression + '"' : '';
 
     if (angular.isArray(options)) {
       $rootScope.$$values = options;
       var renderValueAs = compileOpts ? compileOpts.renderValueAs || 'value' : 'value';
-      optionsTpl = '<md-option ng-repeat="value in $$values" ng-value="value"><div class="md-text">{{' + renderValueAs + '}}</div></md-option>';
+      optionsTpl = '<md-option ng-repeat="value in $$values" ng-value="value"' + ngSelectedTemplate + '>' +
+        '<div class="md-text">{{' + renderValueAs + '}}</div></md-option>';
     } else if (angular.isString(options)) {
       optionsTpl = options;
     }
@@ -1576,7 +1756,7 @@ describe('<md-select>', function() {
   }
 
   function openSelect(el) {
-    if (el[0].nodeName != 'MD-SELECT') {
+    if (el[0].nodeName !== 'MD-SELECT') {
       el = el.find('md-select');
     }
     try {
@@ -1633,7 +1813,7 @@ describe('<md-select>', function() {
     var menu = angular.element($document[0].querySelector('.md-select-menu-container'));
 
     if (menu.length) {
-      if (menu.hasClass('md-active') || menu.attr('aria-hidden') == 'false') {
+      if (menu.hasClass('md-active') || menu.attr('aria-hidden') === 'false') {
         throw Error('Expected select to be closed');
       }
     }
@@ -1642,7 +1822,7 @@ describe('<md-select>', function() {
   function expectSelectOpen() {
     var menu = angular.element($document[0].querySelector('.md-select-menu-container'));
 
-    if (!(menu.hasClass('md-active') && menu.attr('aria-hidden') == 'false')) {
+    if (!(menu.hasClass('md-active') && menu.attr('aria-hidden') === 'false')) {
       throw Error('Expected select to be open');
     }
   }

@@ -2793,65 +2793,15 @@ MdPanelPosition.prototype.addPanelPosition = function(xPosition, yPosition) {
         'relative positioning. Set relativeTo first.');
   }
 
-  this._validateXPosition(xPosition);
-  this._validateYPosition(yPosition);
+  validatePosition(MdPanelPosition.xPosition, xPosition);
+  validatePosition(MdPanelPosition.yPosition, yPosition);
 
   this._positions.push({
-      x: xPosition,
-      y: yPosition,
+    x: xPosition,
+    y: yPosition
   });
+
   return this;
-};
-
-
-/**
- * Ensures that yPosition is a valid position name. Throw an exception if not.
- * @param {string} yPosition
- */
-MdPanelPosition.prototype._validateYPosition = function(yPosition) {
-  // empty is ok
-  if (yPosition == null) {
-      return;
-  }
-
-  var positionKeys = Object.keys(MdPanelPosition.yPosition);
-  var positionValues = [];
-  for (var key, i = 0; key = positionKeys[i]; i++) {
-    var position = MdPanelPosition.yPosition[key];
-    positionValues.push(position);
-
-    if (position === yPosition) {
-      return;
-    }
-  }
-
-  throw new Error('mdPanel: Panel y position only accepts the following ' +
-      'values:\n' + positionValues.join(' | '));
-};
-
-
-/**
- * Ensures that xPosition is a valid position name. Throw an exception if not.
- * @param {string} xPosition
- */
-MdPanelPosition.prototype._validateXPosition = function(xPosition) {
-  // empty is ok
-  if (xPosition == null) {
-      return;
-  }
-
-  var positionKeys = Object.keys(MdPanelPosition.xPosition);
-  var positionValues = [];
-  for (var key, i = 0; key = positionKeys[i]; i++) {
-    var position = MdPanelPosition.xPosition[key];
-    positionValues.push(position);
-    if (position === xPosition) {
-      return;
-    }
-  }
-
-  throw new Error('mdPanel: Panel x Position only accepts the following ' +
-      'values:\n' + positionValues.join(' | '));
 };
 
 
@@ -3356,7 +3306,8 @@ MdPanelAnimation.prototype.animateOpen = function(panelEl) {
       panelEl.css('opacity', '1');
 
       animationOptions = {
-        transitionInClass: '_md-panel-animate-enter'
+        transitionInClass: '_md-panel-animate-enter',
+        transitionOutClass: '_md-panel-animate-leave',
       };
 
       var openSlide = animator.calculateSlideToOrigin(
@@ -3421,7 +3372,8 @@ MdPanelAnimation.prototype.animateClose = function(panelEl) {
       // Slide should start with opacity: 1.
       panelEl.css('opacity', '1');
       reverseAnimationOptions = {
-        transitionInClass: '_md-panel-animate-leave'
+        transitionInClass: '_md-panel-animate-leave',
+        transitionOutClass: '_md-panel-animate-enter _md-panel-animate-leave'
       };
 
       var closeSlide = animator.calculateSlideToOrigin(
@@ -3431,7 +3383,8 @@ MdPanelAnimation.prototype.animateClose = function(panelEl) {
 
     case MdPanelAnimation.animation.SCALE:
       reverseAnimationOptions = {
-        transitionInClass: '_md-panel-animate-scale-out _md-panel-animate-leave'
+        transitionInClass: '_md-panel-animate-scale-out _md-panel-animate-leave',
+        transitionOutClass: '_md-panel-animate-scale-out _md-panel-animate-enter _md-panel-animate-leave'
       };
 
       var closeScale = animator.calculateZoomToOrigin(
@@ -3441,7 +3394,8 @@ MdPanelAnimation.prototype.animateClose = function(panelEl) {
 
     case MdPanelAnimation.animation.FADE:
       reverseAnimationOptions = {
-        transitionInClass: '_md-panel-animate-fade-out _md-panel-animate-leave'
+        transitionInClass: '_md-panel-animate-fade-out _md-panel-animate-leave',
+        transitionOutClass: '_md-panel-animate-fade-out _md-panel-animate-enter _md-panel-animate-leave'
       };
       break;
 
@@ -3547,6 +3501,33 @@ function getComputedTranslations(el, property) {
   }
 
   return output;
+}
+
+/*
+ * Ensures that a value is a valid position name. Throw an exception if not.
+ * @param {Object} positionMap Object against which the value will be checked.
+ * @param {string} value
+ */
+function validatePosition(positionMap, value) {
+  // empty is ok
+  if (value === null || angular.isUndefined(value)) {
+    return;
+  }
+
+  var positionKeys = Object.keys(positionMap);
+  var positionValues = [];
+
+  for (var key, i = 0; key = positionKeys[i]; i++) {
+    var position = positionMap[key];
+    positionValues.push(position);
+
+    if (position === value) {
+      return;
+    }
+  }
+
+  throw new Error('Panel position only accepts the following values:\n' +
+    positionValues.join(' | '));
 }
 
 /**
