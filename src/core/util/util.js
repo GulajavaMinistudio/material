@@ -84,7 +84,7 @@ function UtilFactory($document, $timeout, $compile, $rootScope, $$mdAnimate, $in
      * which supports the breaking changes in the AngularJS snapshot (SHA 87a2ff76af5d0a9268d8eb84db5755077d27c84c).
      * @param {!ngModel.NgModelController} ngModelCtrl
      * @param {!string} optionName
-     * @returns {Object|undefined}
+     * @returns {string|number|boolean|Object|undefined}
      */
     getModelOption: function (ngModelCtrl, optionName) {
       if (!ngModelCtrl.$options) {
@@ -93,8 +93,8 @@ function UtilFactory($document, $timeout, $compile, $rootScope, $$mdAnimate, $in
 
       var $options = ngModelCtrl.$options;
 
-      // The newer versions of AngularJS introduced a `getOption function and made the option values no longer
-      // visible on the $options object.
+      // The newer versions of AngularJS introduced a getOption function and made the option values
+      // no longer visible on the $options object.
       return $options.getOption ? $options.getOption(optionName) : $options[optionName];
     },
 
@@ -603,8 +603,27 @@ function UtilFactory($document, $timeout, $compile, $rootScope, $$mdAnimate, $in
     },
 
     /**
-     * getClosest replicates jQuery.closest() to walk up the DOM tree until it finds a matching
-     * nodeName.
+     * Get an element's siblings matching a given tag name.
+     *
+     * @param {JQLite|angular.element|HTMLElement} element Element to start walking the DOM from
+     * @param {string} tagName HTML tag name to match against
+     * @returns {Object[]} JQLite
+     */
+    getSiblings: function getSiblings(element, tagName) {
+      var upperCasedTagName = tagName.toUpperCase();
+      if (element instanceof angular.element) {
+        element = element[0];
+      }
+      var siblings = Array.prototype.filter.call(element.parentNode.children, function(node) {
+        return element !== node && node.tagName.toUpperCase() === upperCasedTagName;
+      });
+      return siblings.map(function (sibling) {
+        return angular.element(sibling);
+      });
+    },
+
+    /*
+     * getClosest replicates jQuery.closest() to walk up the DOM tree until it finds a matching nodeName
      *
      * @param {Node} el Element to start walking the DOM from
      * @param {string|function} validateWith If a string is passed, it will be evaluated against
@@ -654,7 +673,7 @@ function UtilFactory($document, $timeout, $compile, $rootScope, $$mdAnimate, $in
      * Functional equivalent for $element.filter(‘md-bottom-sheet’)
      * useful with interimElements where the element and its container are important...
      *
-     * @param {angular.JQLite} element to scan
+     * @param {JQLite} element to scan
      * @param {string} nodeName of node to find (e.g. 'md-dialog')
      * @param {boolean=} scanDeep optional flag to allow deep scans; defaults to 'false'.
      * @param {boolean=} warnNotFound optional flag to enable log warnings; defaults to false
