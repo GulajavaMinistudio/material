@@ -33,7 +33,7 @@
    * <ul style="padding-left:20px;">
    *
    *   <ul>Style
-   *     <li>Colours for hover, press states (ripple?).</li>
+   *     <li>Colors for hover, press states (ripple?).</li>
    *   </ul>
    *
    *   <ul>Validation
@@ -135,6 +135,9 @@
    * @param {expression=} md-on-select An expression which will be called when a chip is selected.
    * @param {boolean=} md-require-match If true, and the chips template contains an autocomplete,
    *    only allow selection of pre-defined chips (i.e. you cannot add new ones).
+   * @param {string=} md-input-class This class will be applied to the child input for custom
+   *    styling. If you are using an `md-autocomplete`, then you need to put this attribute on the
+   *    `md-autocomplete` rather than the `md-chips`.
    * @param {string=} input-aria-describedby A space-separated list of element IDs. This should
    *     contain the IDs of any elements that describe this autocomplete. Screen readers will read
    *     the content of these elements at the end of announcing that the chips input has been
@@ -155,8 +158,11 @@
    * @param {string=} delete-hint A string read by screen readers instructing users that pressing
    *    the delete key will remove the chip. You will want to use this to override the default when
    *    in a non-English locale.
-   * @param {string=} delete-button-label <strong>Deprecated</strong> A label for the delete button.
-   *    Used to be read by screen readers.
+   * @param {string=} delete-button-label Text for the `aria-label` of the button with the
+   *    `md-chip-remove` class. If the chip is an Object, then this will be the only text in the
+   *    label. Otherwise, this is prepended to the string representation of the chip. Defaults to
+   *    "Remove", which would be "Remove Apple" for a chip that contained the string "Apple".
+   *    You will want to use this to override the default when in a non-English locale.
    * @param {string=} md-removed-message Screen readers will announce this message following the
    *    chips contents. The default is `"removed"`. If a chip with the content of "Apple" was
    *    removed, the screen reader would read "Apple removed". You will want to use this to override
@@ -246,7 +252,7 @@
 
   var CHIP_INPUT_TEMPLATE = '\
         <input\
-            class="md-input"\
+            class="md-input{{ $mdChipsCtrl.inputClass ? \' \' + $mdChipsCtrl.inputClass: \'\'}}"\
             tabindex="0"\
             aria-label="{{$mdChipsCtrl.inputAriaLabel}}"\
             placeholder="{{$mdChipsCtrl.getPlaceholder()}}"\
@@ -298,12 +304,12 @@
         secondaryPlaceholder: '@?',
         maxChips: '@?mdMaxChips',
         transformChip: '&mdTransformChip',
-        onAppend: '&?mdOnAppend',
         onAdd: '&?mdOnAdd',
         onRemove: '&?mdOnRemove',
         addedMessage: '@?mdAddedMessage',
         removedMessage: '@?mdRemovedMessage',
         onSelect: '&?mdOnSelect',
+        inputClass: '@?mdInputClass',
         inputAriaDescribedBy: '@?inputAriaDescribedby',
         inputAriaLabelledBy: '@?inputAriaLabelledby',
         inputAriaLabel: '@?',
@@ -398,7 +404,7 @@
         mdChipsCtrl.chipRemoveTemplate   = chipRemoveTemplate;
         mdChipsCtrl.chipInputTemplate    = chipInputTemplate;
 
-        mdChipsCtrl.mdCloseIcon = $$mdSvgRegistry.mdClose;
+        mdChipsCtrl.mdCloseIcon = $$mdSvgRegistry.mdCancel;
 
         element
             .attr({ tabindex: -1 })
@@ -415,13 +421,6 @@
           // If an `md-transform-chip` attribute was set, tell the controller to use the expression
           // before appending chips.
           if (attrs.mdTransformChip) mdChipsCtrl.useTransformChipExpression();
-
-          // If an `md-on-append` attribute was set, tell the controller to use the expression
-          // when appending chips.
-          //
-          // TODO: Remove this now that 1.0 is long since released
-          // DEPRECATED: Will remove in official 1.0 release
-          if (attrs.mdOnAppend) mdChipsCtrl.useOnAppendExpression();
 
           // If an `md-on-add` attribute was set, tell the controller to use the expression
           // when adding chips.

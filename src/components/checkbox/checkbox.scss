@@ -5,7 +5,6 @@
 //
 // ^^ defined in _variables.scss
 //
-$checkbox-margin-end: 16px !default;
 $checkbox-text-margin-top: 10px !default;
 $container-checkbox-margin: 3px !default;
 
@@ -13,15 +12,8 @@ $checkbox-min-height: 48px !default;
 $checkbox-min-height-dense: 36px !default;
 $checkbox-text-margin: 36px !default;
 
-// from input.scss
-$input-container-margin-top: 18px !default;
-$input-container-padding-top: 2px !default;
-$input-padding-top: 2px !default;
-$input-padding-bottom: 1px !default;
-$input-border: 1px !default;
-
-$md-inline-alignment: $input-container-margin-top + $input-container-padding-top
-                    + $input-padding-top + $input-padding-bottom + $input-border
+$md-inline-alignment: $input-container-vertical-margin + $input-container-padding
+                    + $input-padding-top + $input-padding-bottom + $input-border-width-default
                     - $checkbox-text-margin-top !default;
 
 .md-inline-form {
@@ -41,13 +33,7 @@ md-checkbox {
   position: relative;
   min-width: $checkbox-width;
   @include dense(min-height, $checkbox-min-height, $checkbox-min-height-dense);
-  @include rtl(margin-left, 0, $checkbox-margin-end);
-  @include rtl(margin-right, $checkbox-margin-end, 0);
 
-  &:last-of-type {
-    margin-left: 0;
-    margin-right: 0;
-  }
   &.md-focused:not([disabled]) {
     .md-container:before {
       left: -8px;

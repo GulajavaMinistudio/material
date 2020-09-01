@@ -173,6 +173,8 @@ function SelectDirective($mdSelect, $mdUtil, $mdConstant, $mdTheming, $mdAria, $
    */
   function compile(tElement, tAttrs) {
     var isMultiple = $mdUtil.parseAttributeBoolean(tAttrs.multiple);
+    tElement.addClass('md-auto-horizontal-margin');
+
     // add the select value that will hold our placeholder or selected option value
     var valueEl = angular.element('<md-select-value><span></span></md-select-value>');
     valueEl.append('<span class="md-select-icon" aria-hidden="true"></span>');
@@ -2065,7 +2067,7 @@ function SelectProvider($$interimElementProvider) {
           transformOrigin = '50% 100%';
         }
       } else {
-        left = (targetRect.left + centeredRect.left - centeredRect.paddingLeft) + 2;
+        left = (targetRect.left + centeredRect.left - centeredRect.paddingLeft);
         top = Math.floor(targetRect.top + targetRect.height / 2 - centeredRect.height / 2 -
             centeredRect.top + contentNode.scrollTop) + 2;
 

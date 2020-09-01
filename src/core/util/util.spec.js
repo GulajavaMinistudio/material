@@ -122,42 +122,10 @@ describe('util', function() {
         expect(target[0].nodeName).toBe("BUTTON");
       }));
 
-      it('should find valid a valid focusTarget with "md-auto-focus"', inject(function($rootScope, $compile, $mdUtil) {
-        var widget = $compile('<div class="autoFocus"><button md-auto-focus><img></button></div>')($rootScope);
-            $rootScope.$apply();
-        var target = $mdUtil.findFocusTarget(widget);
-
-        expect(target[0].nodeName).toBe("BUTTON");
-      }));
-
-      it('should find valid a valid focusTarget with "md-auto-focus" argument', inject(function($rootScope, $compile, $mdUtil) {
-        var widget = $compile('<div class="autoFocus"><button md-autofocus><img></button></div>')($rootScope);
-            $rootScope.$apply();
-        var target = $mdUtil.findFocusTarget(widget,'[md-auto-focus]');
-
-        expect(target[0].nodeName).toBe("BUTTON");
-      }));
-
       it('should find valid a valid focusTarget with a deep "md-autofocus" argument', inject(function($rootScope, $compile, $mdUtil) {
         var widget = $compile('<div class="autoFocus"><md-sidenav><button md-autofocus><img></button></md-sidenav></div>')($rootScope);
             $rootScope.$apply();
         var target = $mdUtil.findFocusTarget(widget);
-
-        expect(target[0].nodeName).toBe("BUTTON");
-      }));
-
-      it('should find valid a valid focusTarget with a deep "md-sidenav-focus" argument', inject(function($rootScope, $compile, $mdUtil) {
-        var template = '' +
-          '<div class="autoFocus">' +
-          '  <md-sidenav>' +
-          '    <button md-sidenav-focus>' +
-          '      <img>' +
-          '    </button>' +
-          '  </md-sidenav>' +
-          '</div>';
-        var widget = $compile(template)($rootScope);
-            $rootScope.$apply();
-        var target = $mdUtil.findFocusTarget(widget,'[md-sidenav-focus]');
 
         expect(target[0].nodeName).toBe("BUTTON");
       }));

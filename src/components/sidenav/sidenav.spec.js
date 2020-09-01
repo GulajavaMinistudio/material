@@ -122,24 +122,6 @@ describe('mdSidenav', function() {
       expect($document.activeElement).toBe(el[0]);
     }));
 
-    it('should focus child with md-sidenav-focus', inject(function($rootScope, $material, $document, $compile) {
-      jasmine.mockElementFocus(this);
-      var parent = angular.element('<div>');
-      var markup = '<md-sidenav md-is-open="show">' +
-                   '    <md-input-container><label>Label</label>' +
-                   '      <input type="text" md-sidenav-focus>' +
-                   '    </md-input-container>' +
-                   '<md-sidenav>';
-      var sidenavEl = angular.element(markup);
-      parent.append(sidenavEl);
-      $compile(parent)($rootScope);
-      $rootScope.$apply('show = true');
-
-      var focusEl = sidenavEl.find('input');
-      $material.flushOutstandingAnimations();
-      expect($document.activeElement).toBe(focusEl[0]);
-    }));
-
     it('should focus child with md-autofocus', inject(function($rootScope, $material, $document, $compile) {
       jasmine.mockElementFocus(this);
       var parent = angular.element('<div>');
@@ -158,13 +140,13 @@ describe('mdSidenav', function() {
       expect($document.activeElement).toBe(focusEl[0]);
     }));
 
-    it('should focus on last md-sidenav-focus element', inject(function($rootScope, $material, $document, $compile) {
+    it('should focus on last md-autofocus element', inject(function($rootScope, $material, $document, $compile) {
       jasmine.mockElementFocus(this);
       var parent = angular.element('<div>');
       var markup = '<md-sidenav md-is-open="show">' +
-        '<md-button md-sidenav-focus>Button</md-button>' +
+        '<md-button md-autofocus>Button</md-button>' +
         '<md-input-container><label>Label</label>' +
-        '<input type="text" md-sidenav-focus>' +
+        '<input type="text" md-autofocus>' +
         '</md-input-container>' +
         '<md-sidenav>';
       var sidenavEl = angular.element(markup);
@@ -187,20 +169,20 @@ describe('mdSidenav', function() {
       expect(el.parent().find('md-backdrop').hasClass('md-locked-open')).toBe(true);
     }));
 
-    it('should expose $mdMedia service as $media local in is-locked-open attribute', function() {
+    it('should expose $mdMedia service as local in is-locked-open attribute', function() {
       var mdMediaSpy = jasmine.createSpy('$mdMedia');
       module(function($provide) {
         $provide.value('$mdMedia', mdMediaSpy);
       });
       inject(function($rootScope, $animate, $document, $mdMedia) {
-        var el = setup('md-is-locked-open="$mdMedia(123)"');
+        setup('md-is-locked-open="$mdMedia(123)"');
         expect($mdMedia).toHaveBeenCalledWith(123);
       });
     });
 
     it('should trigger a resize event when opening',
       inject(function($rootScope, $animate, $$rAF, $window) {
-        var el = setup('md-is-open="show"');
+        setup('md-is-open="show"');
         var obj = { callback: function() {} };
 
         spyOn(obj, 'callback');
