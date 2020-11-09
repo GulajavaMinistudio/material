@@ -16,6 +16,26 @@ For an implementation of the [Material Design Specification (2018+)](https://mat
 please see the [Angular Material](https://github.com/angular/components) project which is built for
 [Angular](https://angular.io) developers.
 
+### <a name="lts"></a> Long Term Support
+
+AngularJS Material has entered a Long Term Support (LTS) period which ends on December 31st, 2021.
+This date aligns with the
+[AngularJS LTS](https://docs.angularjs.org/misc/version-support-status) period.
+
+We now focus exclusively on providing fixes to bugs, in the 1.2.x branch of the library, that
+satisfy at least one of the following criteria:
+  - We receive a report of, or detect, a security weakness which is then verified
+  - A major browser releases a version that will cause current production applications
+    to stop working
+  - The [jQuery library](https://jquery.com/) releases a version that will cause
+    current production applications to stop working
+
+AngularJS Material 1.1.x will get a new version, if and only if, we verify a new severe security
+weakness.
+
+Learn how to report security issues
+[here](https://github.com/angular/material/blob/master/SECURITY.md).
+
 ![venn diagram](https://cloud.githubusercontent.com/assets/210413/5077572/30dfc2f0-6e6a-11e4-9723-07c918128f4f.png)
 
 AngularJS Material includes a rich set of reusable, well-tested, and accessible UI components.
@@ -63,7 +83,7 @@ We have three types of releases:
 
 ##### Patch Releases
 
-The patch builds (1.1.8, 1.1.9, 1.1.10, etc.) are prepared based on commits in the `master` branch;
+The patch builds (1.2.1, 1.2.2, etc.) are prepared based on commits in the `master` branch;
 which contains only non-breaking changes (I.e. bug fixes, new features, API additions, and minimal
 non-breaking CSS changes). We are targeting `patch` releases every 2 weeks.
 
@@ -168,20 +188,20 @@ when using online tools such as [CodePen](http://codepen.io/) or [Plunker](http:
 ```html
   <head>
 
-    <!-- AngularJS Material CSS now available via Google CDN; version 1.2.0 used here -->
-   <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/angular_material/1.2.0/angular-material.min.css">
+    <!-- AngularJS Material CSS now available via Google CDN; version 1.2.1 used here -->
+   <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/angular_material/1.2.1/angular-material.min.css">
 
   </head>
   <body>
 
     <!-- AngularJS Material Dependencies -->
-    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.0/angular.min.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.0/angular-animate.min.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.0/angular-aria.min.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.0/angular-messages.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular-animate.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular-aria.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular-messages.min.js"></script>
 
-    <!-- AngularJS Material Javascript now available via Google CDN; version 1.2.0 used here -->
-    <script src="https://ajax.googleapis.com/ajax/libs/angular_material/1.2.0/angular-material.min.js"></script>
+    <!-- AngularJS Material Javascript now available via Google CDN; version 1.2.1 used here -->
+    <script src="https://ajax.googleapis.com/ajax/libs/angular_material/1.2.1/angular-material.min.js"></script>
   </body>
 ```
 
@@ -198,10 +218,10 @@ pull directly from our [distribution repository](https://github.com/angular/bowe
   <body>
 
     <!-- AngularJS Material Dependencies -->
-    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.0/angular.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.0/angular-animate.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.0/angular-aria.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.0/angular-messages.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular-animate.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular-aria.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular-messages.min.js"></script>
 
     <!-- AngularJS Material Javascript using GitCDN to load directly from `bower-material/master` -->
     <script src="https://gitcdn.xyz/cdn/angular/bower-material/master/angular-material.js"></script>

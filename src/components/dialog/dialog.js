@@ -281,8 +281,9 @@ function MdDialogDirective($$rAF, $mdTheming, $mdDialog) {
  * </hljs>
  *
  * ### JavaScript: promise API syntax, custom dialog template
+ *
  * <hljs lang="js">
- * (function(angular, undefined){
+ * (function(angular, undefined) {
  *   "use strict";
  *
  *   angular
@@ -297,7 +298,6 @@ function MdDialogDirective($$rAF, $mdTheming, $mdDialog) {
  *     var ctrl = this;
  *
  *     ctrl.showAlert = showAlert;
- *     ctrl.closeAlert = closeAlert;
  *     ctrl.showGreeting = showCustomGreeting;
  *
  *     ctrl.hasAlert = function() { return !!alert };
@@ -312,44 +312,36 @@ function MdDialogDirective($$rAF, $mdTheming, $mdDialog) {
  *         .ok('Close');
  *
  *       $mdDialog
- *         .show( alert )
+ *         .show(alert)
  *         .finally(function() {
  *           alert = undefined;
  *         });
  *     }
  *
- *     // Close the specified dialog instance and resolve with 'finished' flag
- *     // Normally this is not needed, just use '$mdDialog.hide()' to close
- *     // the most recent dialog popup.
- *     function closeAlert() {
- *       $mdDialog.hide( alert, "finished" );
- *       alert = undefined;
- *     }
- *
  *     // Dialog #2 - Demonstrate more complex dialogs construction and popup.
  *
  *     function showCustomGreeting($event) {
- *         $mdDialog.show({
- *           targetEvent: $event,
- *           template:
- *             '<md-dialog>' +
- *             '  <md-dialog-content>Hello {{ ctrl.employee }}!</md-dialog-content>' +
- *             '  <md-dialog-actions>' +
- *             '    <md-button ng-click="ctrl.closeDialog()" class="md-primary">' +
- *             '      Close Greeting' +
- *             '    </md-button>' +
- *             '  </md-dialog-actions>' +
- *             '</md-dialog>',
- *           controller: GreetingController,
- *           controllerAs: 'ctrl',
- *           onComplete: afterShowAnimation,
- *           locals: { employee: ctrl.userName }
- *         });
+ *       $mdDialog.show({
+ *         targetEvent: $event,
+ *         template:
+ *           '<md-dialog>' +
+ *           '  <md-dialog-content>Hello {{ ctrl.employee }}!</md-dialog-content>' +
+ *           '  <md-dialog-actions>' +
+ *           '    <md-button ng-click="ctrl.closeDialog()" class="md-primary">' +
+ *           '      Close Greeting' +
+ *           '    </md-button>' +
+ *           '  </md-dialog-actions>' +
+ *           '</md-dialog>',
+ *         controller: GreetingController,
+ *         controllerAs: 'ctrl',
+ *         onComplete: afterShowAnimation,
+ *         locals: { employee: ctrl.userName }
+ *       });
  *
- *         // When the 'enter' animation finishes...
- *         function afterShowAnimation(scope, element, options) {
- *           // post-show code here: DOM element focus, etc.
- *         }
+ *       // When the 'enter' animation finishes...
+ *       function afterShowAnimation(scope, element, options) {
+ *         // post-show code here: DOM element focus, etc.
+ *       }
  *     }
  *   }
  *
@@ -360,7 +352,7 @@ function MdDialogDirective($$rAF, $mdTheming, $mdDialog) {
  *
  *     ctrl.closeDialog = function() {
  *       // Hides the most recent dialog shown.
- *       // Mo specific dialog instance reference is needed.
+ *       // No specific dialog instance reference is needed.
  *       $mdDialog.hide();
  *     };
  *   }
@@ -386,7 +378,7 @@ function MdDialogDirective($$rAF, $mdTheming, $mdDialog) {
  * - `title(string)` - Sets the alert title.
  * - `textContent(string)` - Sets the alert message.
  * - `htmlContent(string)` - Sets the alert message as HTML. Requires the `ngSanitize`
- *     module to be loaded. HTML is not run through Angular's compiler.
+ *     module to be loaded. HTML is not run through AngularJS' compiler.
  * - `ok(string)` - Sets the alert "Okay" button text.
  * - `theme(string)` - Sets the theme of the alert dialog.
  * - `targetEvent(DOMClickEvent=)` - A click's event object. When passed in as an
@@ -410,7 +402,7 @@ function MdDialogDirective($$rAF, $mdTheming, $mdDialog) {
  * - `title(string)` - Sets the confirm title.
  * - `textContent(string)` - Sets the confirm message.
  * - `htmlContent(string)` - Sets the confirm message as HTML. Requires the `ngSanitize`
- *     module to be loaded. HTML is not run through Angular's compiler.
+ *     module to be loaded. HTML is not run through AngularJS' compiler.
  * - `ok(string)` - Sets the confirm "Okay" button text.
  * - `cancel(string)` - Sets the confirm "Cancel" button text.
  * - `theme(string)` - Sets the theme of the confirm dialog.
@@ -436,7 +428,7 @@ function MdDialogDirective($$rAF, $mdTheming, $mdDialog) {
  * - `title(string)` - Sets the prompt title.
  * - `textContent(string)` - Sets the prompt message.
  * - `htmlContent(string)` - Sets the prompt message as HTML. Requires the `ngSanitize`
- *     module to be loaded. HTML is not run through Angular's compiler.
+ *     module to be loaded. HTML is not run through AngularJS' compiler.
  * - `placeholder(string)` - Sets the placeholder text for the input.
  * - `required(boolean)` - Sets the input required value.
  * - `initialValue(string)` - Sets the initial value for the prompt input.
@@ -460,7 +452,7 @@ function MdDialogDirective($$rAF, $mdTheming, $mdDialog) {
  *   - `templateUrl` - `{string=}`: The url of a template that will be used as the content
  *      of the dialog.
  *   - `template` - `{string=}`: HTML template to show in the dialog. This **must** be trusted HTML
- *      with respect to Angular's [$sce service](https://docs.angularjs.org/api/ng/service/$sce).
+ *      with respect to AngularJS' [$sce service](https://docs.angularjs.org/api/ng/service/$sce).
  *      This template should **never** be constructed with any kind of user input or user data.
  *   - `contentElement` - `{string|Element}`: Instead of using a template, which will be compiled
  *      each time a dialog opens, you can also use a DOM element.<br/>
